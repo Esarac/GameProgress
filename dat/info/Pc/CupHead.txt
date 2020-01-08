@@ -1,0 +1,19 @@
+~~Name
+CupHead
+
+~~Progress
+100
+
+~~ExtraProgress
+10
+
+~~Annotations
+Hardcore
+
+~~Marked
+false
+
+~~Achievements (Name | Completed)
+Souls Saved	true
+Perfect Run	false
+Casino Night	true

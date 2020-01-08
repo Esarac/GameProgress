@@ -1,0 +1,24 @@
+#pane{
+	-fx-background-image:url(../../med/Background.gif);
+	-fx-background-position:center;
+  	-fx-background-repeat: no-repeat;
+  	-fx-background-color:white;
+  	-fx-background-size:contain;
+}
+
+.label{
+	-fx-text-fill:Black;
+	-fx-font-family:Impact;
+	-fx-font-size:20;
+	-fx-font-weight:bold;
+}
+
+.menu-bar, .menu-item, .menu{
+	-fx-background-image:url(../../med/MenuBar.png);
+	-fx-background-size:100% 100%;
+}
+
+.menu:hover, .menu-item:hover{
+	-fx-background-image:url(../../med/MenuBar-Hover.png);
+	-fx-background-size:100% 100%;
+}

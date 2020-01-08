@@ -1,0 +1,19 @@
+~~Name
+Don't Starve Together
+
+~~Progress
+30
+
+~~ExtraProgress
+0
+
+~~Annotations
+Open the winter chest
+
+~~Marked
+false
+
+~~Achievements (Name | Completed)
+Silk and Petals	true
+Shouts and Silence	true
+Brains and Brawns	true
