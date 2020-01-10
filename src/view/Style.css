@@ -1,24 +1,128 @@
-#pane{
-	-fx-background-image:url(../../med/Background.gif);
-	-fx-background-position:center;
-  	-fx-background-repeat: no-repeat;
-  	-fx-background-color:white;
-  	-fx-background-size:contain;
+/*Colors---------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+*{
+	/*~Background~*/
+	-back-max:#060606;
+	-back-med:#181818;
+	-back-min:#262626;
+	
+	/*~Item~*/
+	-item:White;
+	-item-highlight:LimeGreen;
+	
+}
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+/*Pane------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/*~Header~*/
+#header{
+	-fx-background-color:-back-max;
 }
 
+/*~Container~*/
+#pane{
+	-fx-background-color:-back-med;
+}
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+/*Universal------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/*~Label~*/
 .label{
-	-fx-text-fill:Black;
-	-fx-font-family:Impact;
+	-fx-text-fill:-item;
+	-fx-font-family:Verdana;
 	-fx-font-size:20;
 	-fx-font-weight:bold;
 }
 
-.menu-bar, .menu-item, .menu{
-	-fx-background-image:url(../../med/MenuBar.png);
-	-fx-background-size:100% 100%;
+/*~Button~*/
+.button{
+	-fx-background-color:Transparent;
+	
+	-fx-text-fill:-item;
+	-fx-font-family:Verdana;
+	-fx-font-size:20;
+	-fx-font-weight:bold;
+}
+.button:hover{/*+Hover*/
+	-fx-background-color:-back-med;
+	-fx-text-fill:-item-highlight;
 }
 
-.menu:hover, .menu-item:hover{
-	-fx-background-image:url(../../med/MenuBar-Hover.png);
-	-fx-background-size:100% 100%;
+/*~Text Field~*/
+.text-field{
+	-fx-highlight-fill: -item-highlight;
+	
+	-fx-background-color:-back-max;
+	
+	-fx-text-fill:-item;
+	-fx-font-family:Verdana;
+	-fx-font-size:20;
+	-fx-font-weight:bold;
 }
+
+/*~Text Area~*/
+.text-area ,.text-area .content{
+	-fx-highlight-fill: -item-highlight;
+	
+	-fx-background-color:-back-max;
+	-fx-border-color:-back-max;
+	
+	-fx-text-fill:-item;
+	-fx-font-family:Verdana;
+	-fx-font-size:20;
+	-fx-font-weight:bold;
+	
+	
+}
+
+/*~Slider~*/
+.slider .track, .slider .thumb{
+	-fx-background-color:-item;
+}
+.slider:pressed .track,.slider:pressed .thumb{/*+Pressed*/
+	-fx-background-color:-item-highlight;
+}
+
+/*~List View~*/
+.list-cell,.list-view{
+	-fx-background-color:Transparent;
+}
+.list-view .scroll-bar{
+	-fx-background-color:Transparent;
+}
+.list-view .scroll-bar .thumb, .list-view .scroll-bar .decrement-arrow, .list-view .scroll-bar .increment-arrow{
+	-fx-background-color:-item;
+}
+.list-view .scroll-bar .thumb:pressed{/*+Pressed*/
+	-fx-background-color:-item-highlight;
+}
+.list-view .scroll-bar .decrement-button:hover, .list-view .scroll-bar .increment-button:hover{/*+Hover*/
+	-fx-background-color:-back-med;
+}
+.list-view .scroll-bar .decrement-arrow:hover, .list-view .scroll-bar .increment-arrow:hover{/*+Hover*/
+	-fx-background-color:-item-highlight;
+}
+
+/*~Object Menu~*/
+.menu-item, .context-menu{
+	-fx-background-color:-back-med;
+}
+.menu-item:hover{/*+Hover*/
+	-fx-background-color:-back-max;
+}
+.menu-item:hover > .label{/*+Hover*/
+	-fx-text-fill:-item-highlight;
+}
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+/*Special------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/*~Item Box (Console, Game, Achievement)~*/
+.item-box{
+	-fx-background-color: Transparent;
+}
+.item-box:hover{/*+Hover*/
+	-fx-background-color: -back-min;
+}
+.item-box:hover > .label{/*+Hover*/
+	-fx-text-fill:-item-highlight;
+}
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/

@@ -13,6 +13,7 @@ import exception.ImpossiblePercentageException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -28,6 +29,7 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -52,6 +54,7 @@ public class ControlMenu implements Initializable{
 	@FXML private VBox pane;
 	private VBox information;
 	@FXML private ListView<HBox> list;
+	private ContextMenu itemMenu;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -68,6 +71,9 @@ public class ControlMenu implements Initializable{
 		header.getChildren().clear();
 		pane.getChildren().remove(information);
 		
+		header.setSpacing(300);
+		header.setAlignment(Pos.CENTER);
+		
 		if(actualConsole==null){//Manager
 			generateManager();
 		}
@@ -82,9 +88,50 @@ public class ControlMenu implements Initializable{
 	public void generateManager() {
 		
 		//HEADER
+		//~APP NAME
+		header.getChildren().add(new Label());
 		header.getChildren().add(new Label("GameProgress"));
+		//~...
 		
-		header.setAlignment(Pos.CENTER);
+		//~ADD
+		Button add=new Button("+");
+		header.getChildren().add(add);
+		
+		add.setOnMouseClicked(event->{
+			//Change Button
+			add.setText("-");
+			add.setOnMouseClicked(mEvent->{
+				generate();
+			});
+			//...
+			
+			//Console
+			HBox itemBox=new HBox();
+			
+			TextField consoleName=new TextField();
+			itemBox.getChildren().add(consoleName);
+			consoleName.setOnKeyPressed(kEvent->{
+        		
+        		if(kEvent.getCode().equals(KeyCode.ENTER)){
+        			try {
+						manager.addConsole(consoleName.getText());
+						generate();
+					}
+        			catch (ExistingElementException e) {
+        				ButtonType ok = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+						Alert alert = new Alert(AlertType.NONE, "Console with this name all ready exist!", ok);
+						alert.setHeaderText(null);
+						alert.setTitle(null);
+						alert.showAndWait();
+					}
+        		}
+        		
+        	});
+			
+			list.getItems().add(itemBox);
+			//...
+		});
+		//~...
 		//...
 		
 		//LIST
@@ -94,6 +141,8 @@ public class ControlMenu implements Initializable{
 			
 			HBox itemBox=new HBox();
 			itemBox.setSpacing(10);
+			itemBox.setAlignment(Pos.CENTER_LEFT);
+			itemBox.getStyleClass().add("item-box");
 			
 			//IMAGE
 			File img=new File(ICONS_PATH+console.getName()+".png");
@@ -119,12 +168,18 @@ public class ControlMenu implements Initializable{
 			
 			//OnAction
 			itemBox.setOnMouseClicked(event->{
+				//Open
 				if(event.getButton()==MouseButton.PRIMARY){
 					this.actualConsole=console;
 					generate();
 				}
+				//...
+				//Option Menu
 				else if(event.getButton()==MouseButton.SECONDARY){
-					ContextMenu consoleMenu = new ContextMenu();
+					if(itemMenu!=null){
+						itemMenu.hide();
+					}
+					itemMenu = new ContextMenu();
 					
 					//Delete
 					MenuItem delete = new MenuItem("Delete Console");
@@ -133,34 +188,49 @@ public class ControlMenu implements Initializable{
 			        	generate();
 			        });
 					//...
-			        
 					//Edit
 					MenuItem edit = new MenuItem("Change name");
 			        edit.setOnAction(eEvent->{
-			        	TextInputDialog td = new TextInputDialog(); 
-				        td.setHeaderText("Set the new name:");
-				        
-				        Optional<String> option=td.showAndWait();
-				        if (option.isPresent()) {
-				        	try {
-								manager.editNameConsole(console.getName(),td.getEditor().getText());
-								generate();
-							}
-				        	catch (ExistingElementException e) {
-								ButtonType ok = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
-								Alert alert = new Alert(AlertType.NONE, "Console with this name all ready exist!", ok);
-								alert.setHeaderText(null);
-								alert.setTitle(null);
-								alert.showAndWait();
-							}
-				        }
+			        	Node nameNode=itemBox.getChildren().get(1);
+			        	itemBox.getChildren().remove(1);
+			        	
+			        	//toTextField
+			        	if(nameNode instanceof Label){
+				        	TextField consoleName=new TextField(console.toString());
+				        	itemBox.getChildren().add(1,consoleName);
+				        	
+				        	consoleName.setOnKeyPressed(kEvent->{
+				        		
+				        		if(kEvent.getCode().equals(KeyCode.ENTER)){
+				        			try {
+										manager.updateNameConsole(console.getName(),consoleName.getText());
+										generate();
+									}
+				        			catch (ExistingElementException e) {
+				        				ButtonType ok = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+										Alert alert = new Alert(AlertType.NONE, "Console with this name all ready exist!", ok);
+										alert.setHeaderText(null);
+										alert.setTitle(null);
+										alert.showAndWait();
+									}
+				        		}
+				        		
+				        	});
+			        	}
+			        	//...
+			        	//toLabel
+			        	else if(nameNode instanceof TextField){
+				        	itemBox.getChildren().add(1, new Label(console.toString()));
+			        	}
+			        	//...
 			        	
 			        });
 					//...
 			        
-			        consoleMenu.getItems().addAll(delete, edit);
-			        consoleMenu.show(itemBox, event.getScreenX(), event.getScreenY());
+			        itemMenu.getItems().addAll(delete, edit);
+			        itemMenu.show(itemBox, event.getScreenX(), event.getScreenY());
 				}
+				//...
 			});
 			//...
 			
@@ -174,17 +244,59 @@ public class ControlMenu implements Initializable{
 	public void generateConsole() {
 		
 		//HEADER
-		Button back=new Button("<--");
+		//~Back
+		Button back=new Button("«");
 		header.getChildren().add(back);
 		back.setOnMouseClicked(event->{
 			this.actualConsole=null;
 			generate();
 		});
-		
+		//~...
+		//~Console Name
 		header.getChildren().add(new Label(actualConsole.toString()));
+		//~...
+		//~Add
+		Button add=new Button("+");
+		header.getChildren().add(add);
 		
-		header.setSpacing(300);
-		header.setAlignment(Pos.CENTER_LEFT);
+		add.setOnMouseClicked(event->{
+			//Change Button
+			add.setText("-");
+			add.setOnMouseClicked(mEvent->{
+				generate();
+			});
+			//...
+			
+			//Game
+			HBox itemBox=new HBox();
+			
+			TextField gameName=new TextField();
+			itemBox.getChildren().add(gameName);
+			gameName.setOnKeyPressed(kEvent->{
+        		
+        		if(kEvent.getCode().equals(KeyCode.ENTER)){
+        			try {
+						actualConsole.addGame(gameName.getText(), 0, 0, "", false);
+						generate();
+					}
+        			catch (ExistingElementException e) {
+        				ButtonType ok = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+						Alert alert = new Alert(AlertType.NONE, "Game with this name all ready exist!", ok);
+						alert.setHeaderText(null);
+						alert.setTitle(null);
+						alert.showAndWait();
+					}
+        			catch(ImpossiblePercentageException e) {
+        				e.printStackTrace();
+        			}
+        		}
+        		
+        	});
+			
+			list.getItems().add(itemBox);
+			//...
+		});
+		//~...
 		//...		
 		
 		//List
@@ -194,6 +306,8 @@ public class ControlMenu implements Initializable{
 			
 			HBox itemBox=new HBox();
 			itemBox.setSpacing(10);
+			itemBox.setAlignment(Pos.CENTER_LEFT);
+			itemBox.getStyleClass().add("item-box");
 			
 			//IMAGE
 			File img=new File(ICONS_PATH+actualConsole.getName()+"/"+game.getName()+".png");
@@ -219,8 +333,69 @@ public class ControlMenu implements Initializable{
 			
 			//OnAction
 			itemBox.setOnMouseClicked(event->{
-				this.actualGame=game;
-				generate();
+				//Open
+				if(event.getButton()==MouseButton.PRIMARY){
+					this.actualGame=game;
+					generate();
+				}
+				//...
+				//Option Menu
+				else if(event.getButton()==MouseButton.SECONDARY){
+					if(itemMenu!=null){
+						itemMenu.hide();
+					}
+					itemMenu = new ContextMenu();
+					
+					//Delete
+					MenuItem delete = new MenuItem("Delete Game");
+			        delete.setOnAction(dEvent->{
+			        	actualConsole.deleteGame(game.getName());
+			        	generate();
+			        });
+					//...
+			        //Edit
+			        MenuItem edit = new MenuItem("Change name");
+			        edit.setOnAction(eEvent->{
+			        	Node nameNode=itemBox.getChildren().get(1);
+			        	itemBox.getChildren().remove(1);
+			        	
+			        	//toTextField
+			        	if(nameNode instanceof Label){
+				        	TextField gameName=new TextField(game.toString());
+				        	itemBox.getChildren().add(1,gameName);
+				        	
+				        	gameName.setOnKeyPressed(kEvent->{
+				        		
+				        		if(kEvent.getCode().equals(KeyCode.ENTER)){
+				        			try {
+										actualConsole.updateNameGame(game.getName(),gameName.getText());
+										generate();
+									}
+				        			catch (ExistingElementException e) {
+				        				ButtonType ok = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+										Alert alert = new Alert(AlertType.NONE, "Game with this name all ready exist!", ok);
+										alert.setHeaderText(null);
+										alert.setTitle(null);
+										alert.showAndWait();
+									}
+				        		}
+				        		
+				        	});
+			        	}
+			        	//...
+			        	//toLabel
+			        	else if(nameNode instanceof TextField){
+				        	itemBox.getChildren().add(1, new Label(game.toString()));
+			        	}
+			        	//...
+			        });
+			        //...
+			        
+			        itemMenu.getItems().addAll(delete, edit);
+			        itemMenu.show(itemBox, event.getScreenX(), event.getScreenY());
+				}
+				//...
+				
 			});
 			//...
 			
@@ -234,17 +409,54 @@ public class ControlMenu implements Initializable{
 	public void generateGame() {
 		
 		//HEADER
-		Button back=new Button("<--");
+		//~Back
+		Button back=new Button("«");
 		header.getChildren().add(back);
 		back.setOnMouseClicked(event->{
 			this.actualGame=null;
 			generate();
 		});
-		
+		//~...
+		//~Game Name
 		header.getChildren().add(new Label(actualGame.toString()));
+		//...
+		//~Add
+		Button add=new Button("+");
+		header.getChildren().add(add);
 		
-		header.setSpacing(300);
-		header.setAlignment(Pos.CENTER_LEFT);
+		add.setOnMouseClicked(event->{
+			//Change Button
+			add.setText("-");
+			add.setOnMouseClicked(mEvent->{
+				generate();
+			});
+			//...
+			//Achievement
+			HBox itemBox=new HBox();
+			
+			TextField achievementName=new TextField();
+			itemBox.getChildren().add(achievementName);
+			
+			achievementName.setOnKeyPressed(kEvent->{
+				if(kEvent.getCode().equals(KeyCode.ENTER)){
+        			try {
+						actualGame.addAchievement(achievementName.getText(), false);
+						generate();
+					}
+        			catch (ExistingElementException e) {
+        				ButtonType ok = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+						Alert alert = new Alert(AlertType.NONE, "Achievement with this name all ready exist!", ok);
+						alert.setHeaderText(null);
+						alert.setTitle(null);
+						alert.showAndWait();
+					}
+        		}
+			});
+			
+			list.getItems().add(itemBox);
+			//...
+		});
+		//~...
 		//...
 		
 		//INFO

@@ -53,14 +53,18 @@ public class Manager implements Listable<Console>{
 		}
 	}
 	
-	public void editNameConsole(String actualName, String newName) throws ExistingElementException{
+	public void updateNameConsole(String actualName, String newName) throws ExistingElementException{
 		Console console=searchConsole(actualName);
-		if(searchConsole(newName)==null){
-			console.setName(newName);
+		
+		if(console!=null) {
+			if(searchConsole(newName)==null || actualName.equals(newName)){
+				console.setName(newName);
+			}
+			else{
+				throw new ExistingElementException();
+			}
 		}
-		else{
-			throw new ExistingElementException();
-		}
+		
 	}
 	
 	public Console searchConsole(String name) {
@@ -78,7 +82,7 @@ public class Manager implements Listable<Console>{
 	}
 	
 	//Load
-	public void loadConsoles() throws ExistingElementException, IOException, ImpossiblePercentageException{
+	public void loadConsoles() throws ExistingElementException, IOException, ImpossiblePercentageException{//[FILE]
 		
 		File folder = new File(CONSOLES_PATH);
 		for (final File fileEntry : folder.listFiles()) {

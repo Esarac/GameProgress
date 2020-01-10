@@ -11,6 +11,9 @@ import exception.ImpossiblePercentageException;
 
 public class Game implements Listable<Achievement>{
 
+	//Constant
+	public final static String GAME_EXTENSION=".gme";
+	
 	//Attribute
 	private String name;
 	private double progress;
@@ -60,7 +63,7 @@ public class Game implements Listable<Achievement>{
 	}
 	
 	//Save
-	public void saveGame(String consolePath) throws FileNotFoundException {
+	public void saveGame(String consolePath) throws FileNotFoundException {//[FILE]
 		String text="~~Name\n"+name;
 		text+="\n~~Progress\n"+(progress*100);
 		text+="\n~~ExtraProgress\n"+(extraProgress*100);
@@ -91,6 +94,10 @@ public class Game implements Listable<Achievement>{
 		this.annotations=annotations;
 		this.marked=marked;
 		
+	}
+	
+	public void setName(String name) {
+		this.name=name;
 	}
 	
 	public void setMarked(boolean marked) {
