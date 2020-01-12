@@ -2,12 +2,14 @@ package model;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import exception.ExistingElementException;
 import exception.ImpossiblePercentageException;
+import exception.InvalidCharException;
 
 public class Console implements Comparable<Console>, Listable<Game>{
 	
@@ -19,15 +21,18 @@ public class Console implements Comparable<Console>, Listable<Game>{
 	private ArrayList<Game> games;
 	
 	//Constructor
-	public Console(String name) {
+	public Console(String name) throws InvalidCharException {
 		System.out.println(name);
-		this.name=name;
+		
+		if(InvalidCharException.validateString(name)){this.name=name;}
+		else{throw new InvalidCharException();}
+		
 		this.games=new ArrayList<Game>();
 		
 	}
 	
 	//Method
-	public void addGame(String name, double progress, double extraProgress, String annotations, boolean marked) throws ExistingElementException, ImpossiblePercentageException{
+	public void addGame(String name, double progress, double extraProgress, String annotations, boolean marked) throws ExistingElementException, ImpossiblePercentageException, InvalidCharException{
 		if(searchGame(name)==null){
 			games.add(new Game(name, progress, extraProgress, annotations, marked));
 		}
@@ -56,7 +61,7 @@ public class Console implements Comparable<Console>, Listable<Game>{
 		}
 	}
 	
-	public void updateNameGame(String actualName, String newName) throws ExistingElementException{
+	public void updateNameGame(String actualName, String newName) throws ExistingElementException, InvalidCharException{
 		Game game=searchGame(actualName);
 		
 		if(game!=null) {
@@ -93,17 +98,27 @@ public class Console implements Comparable<Console>, Listable<Game>{
 			}
 			average/=games.size();
 		}
+		else{
+			average=1;
+		}
 		
 		return average;
 	}
 	
 	//Save
-	public void saveConsole() {
+	public void saveConsole() throws FileNotFoundException {
+		String path=Manager.CONSOLES_PATH+name+"/";
+		File folder=new File(path);
+		
+		folder.mkdir();
+		for(int i=0; i<games.size(); i++){
+			games.get(i).saveGame(path);
+		}
 		
 	}
 	
 	//Load
-	public void loadGames(String folderPath) throws IOException, ImpossiblePercentageException, ExistingElementException{//[FILE]
+	public void loadGames(String folderPath) throws IOException, ImpossiblePercentageException, ExistingElementException, InvalidCharException{//[FILE]
 		boolean possible=true;
 		
 		File folder = new File(folderPath);
@@ -111,12 +126,14 @@ public class Console implements Comparable<Console>, Listable<Game>{
 			
 			String[] data=read(folderPath+fileEntry.getName()).split("\n");
 			
-			if(data.length>=5) {
+			if(data.length>=4) {
 				
 				String name=fileEntry.getName().split(Game.GAME_EXTENSION)[0];
 				double progress=Double.parseDouble(data[0])/100;
 				double extraProgress=Double.parseDouble(data[1])/100;
-				String annotations=data[2];
+				String annotations;
+				if(data[2].equals("[NO-DATA]")){annotations="";}
+				else{annotations=data[2];}
 				boolean marked=Boolean.parseBoolean(data[3]);
 				
 				Game game=new Game(name, progress, extraProgress, annotations, marked);
@@ -167,8 +184,9 @@ public class Console implements Comparable<Console>, Listable<Game>{
 	}
 	
 	//Set
-	public void setName(String name) {
-		this.name=name;
+	public void setName(String name) throws InvalidCharException {
+		if(InvalidCharException.validateString(name)){this.name=name;}
+		else{throw new InvalidCharException();}
 	}
 	
 	//Get

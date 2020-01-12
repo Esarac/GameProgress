@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import exception.ExistingElementException;
 import exception.ImpossiblePercentageException;
+import exception.InvalidCharException;
 
 public class Game implements Listable<Achievement>{
 
@@ -23,7 +24,7 @@ public class Game implements Listable<Achievement>{
 	private ArrayList<Achievement> achievements;
 	
 	//Constructor
-	public Game(String name, double progress, double extraProgress, String annotations, boolean marked) throws ImpossiblePercentageException{
+	public Game(String name, double progress, double extraProgress, String annotations, boolean marked) throws ImpossiblePercentageException, InvalidCharException{
 		System.out.println("	"+name+" "+progress+" "+extraProgress+" "+annotations+" "+marked);
 		if((0<=progress)&&(progress<=1)) {this.progress=progress;}
 		else {throw new ImpossiblePercentageException();}
@@ -31,7 +32,9 @@ public class Game implements Listable<Achievement>{
 		if((0<=extraProgress)&&(extraProgress<=1)) {this.extraProgress=extraProgress;}
 		else {throw new ImpossiblePercentageException();}
 		
-		this.name=name;
+		if(InvalidCharException.validateString(name)){this.name=name;}
+		else{throw new InvalidCharException();}
+		
 		this.annotations=annotations;
 		this.marked=marked;
 		this.achievements=new ArrayList<Achievement>();
@@ -45,6 +48,30 @@ public class Game implements Listable<Achievement>{
 		}
 		else{
 			throw new ExistingElementException();
+		}
+	}
+	
+	public void deleteAchievement(String name) {
+		boolean found=false;
+		
+		for(int i=0; (i<achievements.size()) && (!found); i++){
+			if(name.equals(achievements.get(i).getName())){
+				achievements.remove(i);
+				found=true;
+			}
+		}
+	}
+	
+	public void updateNameAchievement(String actualName, String newName) throws ExistingElementException{
+		Achievement achievement=searchAchievement(actualName);
+		
+		if(achievement!=null) {
+			if(searchAchievement(newName)==null || actualName.equals(newName)){
+				achievement.setName(newName);
+			}
+			else{
+				throw new ExistingElementException();
+			}
 		}
 	}
 	
@@ -64,10 +91,11 @@ public class Game implements Listable<Achievement>{
 	
 	//Save
 	public void saveGame(String consolePath) throws FileNotFoundException {//[FILE]
-		String text="~~Name\n"+name;
-		text+="\n~~Progress\n"+(progress*100);
+		String text="\n~~Progress\n"+(progress*100);
 		text+="\n~~ExtraProgress\n"+(extraProgress*100);
-		text+="\n~~Annotations\n"+annotations;
+		if(annotations.isEmpty()){text+="\n~~Annotations\n[NO-DATA]";}
+		else{text+="\n~~Annotations\n"+annotations;}
+		
 		text+="\n~~Marked\n"+marked;
 		
 		text+="\n~~Achievements (Name | Completed)\n";
@@ -75,14 +103,14 @@ public class Game implements Listable<Achievement>{
 			text+="\n"+achievements.get(i).getName()+"	"+achievements.get(i).isCompleted();
 		}
 		
-		File file=new File(consolePath+name);
+		File file=new File(consolePath+name+GAME_EXTENSION);
 		PrintWriter writer=new PrintWriter(file);
 		writer.append(text);
 		writer.close();
 	}
 	
 	//Set
-	public void updateGame(String name, double progress, double extraProgress, String annotations, boolean marked) throws ImpossiblePercentageException {
+	public void updateGame(double progress, double extraProgress, String annotations, boolean marked) throws ImpossiblePercentageException {
 		
 		if((0<=progress)&&(progress<=1)) {this.progress=progress;}
 		else {throw new ImpossiblePercentageException();}
@@ -90,14 +118,14 @@ public class Game implements Listable<Achievement>{
 		if((0<=extraProgress)&&(extraProgress<=1)) {this.extraProgress=extraProgress;}
 		else {throw new ImpossiblePercentageException();}
 		
-		this.name=name;
 		this.annotations=annotations;
 		this.marked=marked;
 		
 	}
 	
-	public void setName(String name) {
-		this.name=name;
+	public void setName(String name) throws InvalidCharException {
+		if(InvalidCharException.validateString(name)){this.name=name;}
+		else{throw new InvalidCharException();}
 	}
 	
 	public void setMarked(boolean marked) {

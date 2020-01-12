@@ -16,6 +16,7 @@
 /*~Header~*/
 #header{
 	-fx-background-color:-back-max;
+	-fx-spacing:200;
 }
 
 /*~Container~*/
@@ -46,6 +47,31 @@
 	-fx-background-color:-back-med;
 	-fx-text-fill:-item-highlight;
 }
+.button:pressed{/*+Pressed*/
+	-fx-background-color:-back-min;
+}
+
+/*~Check Box~*/
+.check-box .box{
+	-fx-background-color:-back-max;
+	
+	-fx-border-radius: 5em;
+	
+	-fx-background-radius: 5em;
+	-fx-min-width: 3px;
+	-fx-min-height: 3px;
+	-fx-max-width: 3px;
+	-fx-max-height: 3px;
+}
+.check-box:selected .box{
+	-fx-background-color:-item-highlight;
+}
+.check-box:selected .mark{
+	-fx-background-color:Transparent;
+}
+.check-box:hover .box{
+	-fx-border-color:-back-min;
+}
 
 /*~Text Field~*/
 .text-field{
@@ -75,6 +101,9 @@
 }
 
 /*~Slider~*/
+.slider{
+	-fx-pref-width:400;
+}
 .slider .track, .slider .thumb{
 	-fx-background-color:-item;
 }
@@ -106,6 +135,9 @@
 .menu-item, .context-menu{
 	-fx-background-color:-back-med;
 }
+.context-menu{
+	-fx-border-color:-item;
+}
 .menu-item:hover{/*+Hover*/
 	-fx-background-color:-back-max;
 }
@@ -115,6 +147,11 @@
 /*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 /*Special------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/*~Title (App Name)~*/
+.title{
+	-fx-text-fill:-item-highlight;
+}
+
 /*~Item Box (Console, Game, Achievement)~*/
 .item-box{
 	-fx-background-color: Transparent;
@@ -124,5 +161,11 @@
 }
 .item-box:hover > .label{/*+Hover*/
 	-fx-text-fill:-item-highlight;
+}
+
+/*~Marker~*/
+.marker{
+	-fx-text-fill:-item-highlight;
+	-fx-font-size:40;
 }
 /*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/

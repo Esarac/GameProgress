@@ -10,7 +10,7 @@ public class Achievement {
 	public Achievement(String name, boolean completed) {
 		System.out.println("		"+name+" "+completed);
 		this.name=name;
-		this.completed=false;
+		this.completed=completed;
 		
 	}
 	
