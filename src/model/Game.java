@@ -80,7 +80,7 @@ public class Game implements Listable<Achievement>{
 		
 		boolean found=false;
 		for(int i=0; (i<achievements.size()) && (!found); i++){
-			if(name.equals(achievements.get(i).getName())){
+			if(name.equalsIgnoreCase(achievements.get(i).getName())){
 				achievement=achievements.get(i);
 				found=true;
 			}

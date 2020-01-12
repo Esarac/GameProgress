@@ -20,6 +20,7 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
@@ -34,7 +35,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.FileChooser.ExtensionFilter;
 import model.Achievement;
 import model.Console;
 import model.Game;
@@ -79,6 +82,7 @@ public class ControlMenu implements Initializable{
 		header.getChildren().clear();
 		list.getItems().clear();
 		pane.getChildren().remove(information);
+		if(itemMenu!=null){itemMenu.hide();}
 		
 		header.setAlignment(Pos.CENTER);
 		
@@ -146,15 +150,15 @@ public class ControlMenu implements Initializable{
 					generateItemMenu();
 					
 					//Delete
-					MenuItem delete = new MenuItem("Delete Console");
+					MenuItem delete = new MenuItem("Delete");
 			        delete.setOnAction(dEvent->{
 			        	manager.deleteConsole(console.getName());
 			        	generate();
 			        });
 					//...
-					//Edit
-					MenuItem edit = new MenuItem("Change name");
-			        edit.setOnAction(eEvent->{
+					//Name
+					MenuItem name = new MenuItem("Change Name");
+					name.setOnAction(eEvent->{
 			        	Node nameNode=itemBox.getChildren().get(1);
 			        	itemBox.getChildren().remove(1);
 			        	
@@ -185,8 +189,29 @@ public class ControlMenu implements Initializable{
 			        	
 			        });
 					//...
+			        //Image
+			        MenuItem image = new MenuItem("Change Image");
+			        image.setOnAction(eEvent->{
+			        	//Choose File
+			        	Stage stage = (Stage) pane.getScene().getWindow();
+				        FileChooser fileChooser = new FileChooser();
+						fileChooser.setTitle("Image Selector");
+						fileChooser.getExtensionFilters().add(new ExtensionFilter("PNG", "*.png"));
+						File imageFile=fileChooser.showOpenDialog(stage);
+						//...
+						//Delete
+						File newImageFile=new File(ICONS_PATH+console.getName()+".png");
+						newImageFile.delete();
+						//...
+						//Change
+						imageFile.renameTo(newImageFile);
+						generate();
+						//...
+						
+			        });
+			        //...
 			        
-			        itemMenu.getItems().addAll(delete, edit);
+			        itemMenu.getItems().addAll(delete, name, image);
 			        itemMenu.show(itemBox, event.getScreenX(), event.getScreenY());
 				}
 				//...
@@ -266,15 +291,15 @@ public class ControlMenu implements Initializable{
 					generateItemMenu();
 					
 					//Delete
-					MenuItem delete = new MenuItem("Delete Game");
+					MenuItem delete = new MenuItem("Delete");
 			        delete.setOnAction(dEvent->{
 			        	actualConsole.deleteGame(game.getName());
 			        	generate();
 			        });
 					//...
-			        //Edit
-			        MenuItem edit = new MenuItem("Change name");
-			        edit.setOnAction(eEvent->{
+			        //Name
+			        MenuItem name = new MenuItem("Change Name");
+			        name.setOnAction(eEvent->{
 			        	Node nameNode=itemBox.getChildren().get(1);
 			        	itemBox.getChildren().remove(1);
 			        	
@@ -304,8 +329,32 @@ public class ControlMenu implements Initializable{
 			        	//...
 			        });
 			        //...
+			        //Image
+			        MenuItem image = new MenuItem("Change Image");
+			        image.setOnAction(eEvent->{
+			        	//Choose File
+			        	Stage stage = (Stage) pane.getScene().getWindow();
+				        FileChooser fileChooser = new FileChooser();
+						fileChooser.setTitle("Image Selector");
+						fileChooser.getExtensionFilters().add(new ExtensionFilter("PNG", "*.png"));
+						File imageFile=fileChooser.showOpenDialog(stage);
+						//...
+						//CreateDir
+						new File(ICONS_PATH+actualConsole.getName()).mkdir();
+						//...
+						//Delete
+						File newImageFile=new File(ICONS_PATH+actualConsole.getName()+"/"+game.getName()+".png");
+						newImageFile.delete();
+						//...
+						//Change
+						imageFile.renameTo(newImageFile);
+						generate();
+						//...
+						
+			        });
+			        //...
 			        
-			        itemMenu.getItems().addAll(delete, edit);
+			        itemMenu.getItems().addAll(delete, name, image);
 			        itemMenu.show(itemBox, event.getScreenX(), event.getScreenY());
 				}
 				//...
@@ -456,8 +505,8 @@ public class ControlMenu implements Initializable{
 			HBox itemBox=generateItemBox(achievement.toString(), actualConsole.getName()+"/"+actualGame.getName()+"/"+achievement.getName()+".png", "Achievement.png");
 			
 			//IMAGE COLOR
-			ImageView image=(ImageView) itemBox.getChildren().get(0);
-			changeImageOpasity(image, achievement.isCompleted());
+			ImageView icon=(ImageView) itemBox.getChildren().get(0);
+			changeImageOpasity(icon, achievement.isCompleted());
 			//...
 			
 			
@@ -469,7 +518,7 @@ public class ControlMenu implements Initializable{
 			completed.setOnMouseClicked(event->{
 				if(event.getButton()==MouseButton.PRIMARY){
 					achievement.setCompleted(completed.isSelected());
-					changeImageOpasity(image, achievement.isCompleted());
+					changeImageOpasity(icon, achievement.isCompleted());
 				}
 			});
 			//...
@@ -480,15 +529,15 @@ public class ControlMenu implements Initializable{
 					generateItemMenu();
 					
 					//Delete
-					MenuItem delete = new MenuItem("Delete Achievement");
+					MenuItem delete = new MenuItem("Delete");
 			        delete.setOnAction(dEvent->{
 			        	actualGame.deleteAchievement(achievement.getName());
 			        	generate();
 			        });
 					//...
-			        //Edit
-			        MenuItem edit = new MenuItem("Change name");
-			        edit.setOnAction(eEvent->{
+			        //Name
+			        MenuItem name = new MenuItem("Change Name");
+			        name.setOnAction(eEvent->{
 			        	Node nameNode=itemBox.getChildren().get(1);
 			        	itemBox.getChildren().remove(1);
 			        	
@@ -519,8 +568,34 @@ public class ControlMenu implements Initializable{
 			        	//...
 			        });
 			        //...
-			        
-			        itemMenu.getItems().addAll(delete, edit);
+			        //Image
+			        MenuItem image = new MenuItem("Change Image");
+			        image.setOnAction(eEvent->{
+			        	//Choose File
+			        	Stage stage = (Stage) pane.getScene().getWindow();
+				        FileChooser fileChooser = new FileChooser();
+						fileChooser.setTitle("Image Selector");
+						fileChooser.getExtensionFilters().add(new ExtensionFilter("PNG", "*.png"));
+						File imageFile=fileChooser.showOpenDialog(stage);
+						//...
+						//CreateDir
+						new File(ICONS_PATH+actualConsole.getName()).mkdir();
+						new File(ICONS_PATH+actualConsole.getName()+"/"+actualGame.getName()).mkdir();
+						//...
+						//Delete
+						File newImageFile=new File(ICONS_PATH+actualConsole.getName()+"/"+actualGame.getName()+"/"+achievement.getName()+".png");
+						newImageFile.delete();
+						//...
+						//Change
+						if(imageFile!=null){
+							imageFile.renameTo(newImageFile);
+						}
+						generate();
+						//...
+						
+			        });
+			        //...
+			        itemMenu.getItems().addAll(delete, name, image);
 			        itemMenu.show(itemBox, event.getScreenX(), event.getScreenY());
 				}
 			});
@@ -559,6 +634,12 @@ public class ControlMenu implements Initializable{
 		Alert alert = new Alert(AlertType.NONE, message, ok);
 		alert.setHeaderText(null);
 		alert.setTitle(null);
+		
+		DialogPane dialogPane = alert.getDialogPane();
+		dialogPane.getStylesheets().add(getClass().getResource("/view/Style.css").toExternalForm());
+		Stage stage = (Stage) dialogPane.getScene().getWindow();
+		stage.getIcons().add(new Image("file:../../med/icon/Logo.png"));
+		
 		alert.showAndWait();
 	}
 	

@@ -75,7 +75,7 @@ public class Manager implements Listable<Console>{
 		
 		boolean found=false;
 		for(int i=0; (i<consoles.size()) && (!found); i++){
-			if(name.equals(consoles.get(i).getName())){
+			if(name.equalsIgnoreCase(consoles.get(i).getName())){
 				console=consoles.get(i);
 				found=true;
 			}

@@ -80,7 +80,7 @@ public class Console implements Comparable<Console>, Listable<Game>{
 		
 		boolean found=false;
 		for(int i=0; (i<games.size()) && (!found); i++){
-			if(name.equals(games.get(i).getName())){
+			if(name.equalsIgnoreCase(games.get(i).getName())){
 				game=games.get(i);
 				found=true;
 			}
