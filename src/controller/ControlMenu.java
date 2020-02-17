@@ -130,7 +130,7 @@ public class ControlMenu implements Initializable{
 		for(int i=0; i<consoles.size(); i++){
 			Console console=consoles.get(i);
 			
-			HBox itemBox=generateItemBox(console.toString(), console.getName()+".png", "Console.png");
+			HBox itemBox=generateItemBox(console.toString(), console.getName(), "Console.png");
 			
 			//PROGRESS
 			String progress=(int)(console.calculateProgress()*100)+"%";
@@ -204,7 +204,9 @@ public class ControlMenu implements Initializable{
 						newImageFile.delete();
 						//...
 						//Change
-						imageFile.renameTo(newImageFile);
+						if(imageFile!=null){
+							imageFile.renameTo(newImageFile);
+						}
 						generate();
 						//...
 						
@@ -263,7 +265,7 @@ public class ControlMenu implements Initializable{
 		for(int i=0; i<games.size(); i++){
 			Game game=games.get(i);
 			
-			HBox itemBox=generateItemBox(game.toString(), actualConsole.getName()+"/"+game.getName()+".png", "Game.png");
+			HBox itemBox=generateItemBox(game.toString(), actualConsole.getName()+"/"+game.getName(), "Game.png");
 			
 			//PROGRESS
 			String progress=(int)(game.getProgress()*100)+"%";
@@ -347,7 +349,9 @@ public class ControlMenu implements Initializable{
 						newImageFile.delete();
 						//...
 						//Change
-						imageFile.renameTo(newImageFile);
+						if(imageFile!=null){
+							imageFile.renameTo(newImageFile);
+						}
 						generate();
 						//...
 						
@@ -502,7 +506,7 @@ public class ControlMenu implements Initializable{
 		for(int i=0; i<achievements.size(); i++){
 			Achievement achievement=achievements.get(i);
 			
-			HBox itemBox=generateItemBox(achievement.toString(), actualConsole.getName()+"/"+actualGame.getName()+"/"+achievement.getName()+".png", "Achievement.png");
+			HBox itemBox=generateItemBox(achievement.toString(), actualConsole.getName()+"/"+actualGame.getName()+"/"+achievement.getName(), "Achievement.png");
 			
 			//IMAGE COLOR
 			ImageView icon=(ImageView) itemBox.getChildren().get(0);
@@ -663,7 +667,7 @@ public class ControlMenu implements Initializable{
 		itemBox.getStyleClass().add("item-box");
 		
 		//Image
-		File img=new File(ICONS_PATH+imgPath);
+		File img=new File(ICONS_PATH+imgPath+".png");
 		if(!img.exists()){
 			img=new File(DEFAULT_ICONS_PATH+defaultImgPath);
 		}
